@@ -3,6 +3,7 @@ const connectDB = require("./config/db")
 const User = require("./models/user")
 const {validateSignupData} = require("./utils/validation")
 const bcrypt = require('bcrypt');
+const validator = require("validator");
 
 const app = express();
 
@@ -39,6 +40,30 @@ app.post("/signup", async (req,res)=>{
     }
 
     
+})
+
+app.post("/login",async (req,res)=>{
+
+    try{
+        const {emailId,password} = req.body;
+        if(!validator.isEmail(emailId.trim())){
+            throw new Error("INVALID CREDENTIALS!!!")
+        }
+        const user = await User.findOne({emailId : emailId.trim()});
+        if(!user){
+            throw new Error("INVALID CREDENTIALS!!!")
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password );
+
+        if(isPasswordValid){
+            res.send("LOGIN SUCCESSFUL!!!")
+        } else {
+            throw new Error("INVALID CREDENTIALS!!!")
+        }
+    }
+    catch(err){
+        res.status(400).send("ERROR! => " + err);
+    }
 })
 
 // GET USER by email
