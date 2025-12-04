@@ -18,7 +18,6 @@ authRouter.post("/signup", async (req,res)=>{
     //Encryption of Password
     const { firstName, lastName, emailId, password, age, gender, skills, about, photoUrl } = req.body;
     const hashedPass = await bcrypt.hash(password,10);
-    console.log(hashedPass);
     // Creating Instance of the Model
     const user = new User ({
         firstName,
@@ -57,7 +56,7 @@ authRouter.post("/login",async (req,res)=>{
         if(isPasswordValid){
             //Create a JWT
             const token = await jwt.sign({_id:user._id},"Piyush$##%124",{expiresIn:"1d"}); 
-            console.log(token);
+            
 
             // Add the token to the cookie and send response to the user.
 
