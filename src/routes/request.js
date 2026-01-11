@@ -48,14 +48,14 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
     if (status === "interested") {
   console.log("📩 Interested request created");
 
-  if (!toUser.email) {
+  if (!toUser.emailId) {
     console.log("❌ Receiver email missing in DB");
   } else {
-    console.log("📨 Sending email to:", toUser.email);
+    console.log("📨 Sending email to:", toUser.emailId);
 
     try {
       await sendEmail({
-        to: toUser.email,
+        to: toUser.emailId,
         subject: "New Connection Request 🔥",
         html: `
           <div style="font-family: Arial, sans-serif;">
@@ -68,7 +68,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
         `,
       });
 
-      console.log("✅ Email sent to:", toUser.email);
+      console.log("✅ Email sent to:", toUser.emailId);
     } catch (err) {
       console.log("❌ Email failed:", err);
     }
