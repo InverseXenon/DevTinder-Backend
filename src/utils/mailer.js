@@ -1,18 +1,14 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.BREVO_SMTP_HOST,
-  port: Number(process.env.BREVO_SMTP_PORT || 587),
-  secure: false,
-  auth: {
-    user: process.env.BREVO_SMTP_USER,
-    pass: process.env.BREVO_SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, html }) => {
-  return transporter.sendMail({
-    from: `"DevTinder Alerts" <${process.env.BREVO_SMTP_USER}>`,
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY missing in .env");
+  }
+
+  return resend.emails.send({
+    from: "DevTinder <onboarding@resend.dev>", 
     to,
     subject,
     html,

@@ -46,30 +46,35 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
 
     // ✅ Send email only when interested
     if (status === "interested") {
-      console.log("📩 Interested request created");
+  console.log("📩 Interested request created");
 
-      if (!toUser.email) {
-        console.log("❌ Receiver email missing in DB");
-      } else {
-        console.log("📨 Sending email to:", toUser.email);
+  if (!toUser.email) {
+    console.log("❌ Receiver email missing in DB");
+  } else {
+    console.log("📨 Sending email to:", toUser.email);
 
-        sendEmail({
-          to: toUser.email,
-          subject: "New Connection Request 🔥",
-          html: `
-            <div style="font-family: Arial, sans-serif;">
-              <h2>Hey ${toUser.firstName} 👋</h2>
-              <p><b>${req.user.firstName}</b> sent you a connection request on DevTinder.</p>
-              <p>Open the Website → <a href="http://devstinder.duckdns.org/">DevTinder</a> to accept/reject.</p>
-              <br/>
-              <p style="font-size:12px;color:gray;">DevTinder Alerts</p>
-            </div>
-          `,
-        })
-          .then(() => console.log("✅ Email sent to:", toUser.email))
-          .catch((err) => console.log("❌ Email failed:", err));
-      }
+    try {
+      await sendEmail({
+        to: toUser.email,
+        subject: "New Connection Request 🔥",
+        html: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Hey ${toUser.firstName} 👋</h2>
+            <p><b>${req.user.firstName}</b> sent you a connection request on DevTinder.</p>
+            <p>Open the Website → <a href="http://devstinder.duckdns.org/">DevTinder</a> to accept/reject.</p>
+            <br/>
+            <p style="font-size:12px;color:gray;">DevTinder Alerts</p>
+          </div>
+        `,
+      });
+
+      console.log("✅ Email sent to:", toUser.email);
+    } catch (err) {
+      console.log("❌ Email failed:", err);
     }
+  }
+}
+
 
     return res.json({
       message: `${req.user.firstName} is ${status} in ${toUser.firstName}`,
@@ -114,5 +119,8 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
     return res.status(400).send("Error " + error);
   }
 });
+
+
+
 
 module.exports = requestRouter;
