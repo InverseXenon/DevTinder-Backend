@@ -31,8 +31,15 @@ authRouter.post("/signup", async (req,res)=>{
             photoUrl,
     })
 
-    await user.save();
-    res.send("User Added Succesfully!")
+    const savedUser = await user.save();
+    const token = await jwt.sign({_id:savedUser._id},"Piyush$##%124",{expiresIn:"1d"});            
+
+            // Add the token to the cookie and send response to the user.
+
+            res.cookie("token", token);
+    res.json({message:"User Added Succesfully!",
+        data:savedUser
+    });
     } catch (error) {
         res.send("User is not added => " + error)
     }
@@ -55,8 +62,7 @@ authRouter.post("/login",async (req,res)=>{
 
         if(isPasswordValid){
             //Create a JWT
-            const token = await jwt.sign({_id:user._id},"Piyush$##%124",{expiresIn:"1d"}); 
-            
+            const token = await jwt.sign({_id:user._id},"Piyush$##%124",{expiresIn:"1d"});            
 
             // Add the token to the cookie and send response to the user.
 
