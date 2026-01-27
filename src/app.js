@@ -5,6 +5,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+app.set("trust proxy", 1);
 
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
@@ -13,7 +14,7 @@ const userRouter = require("./routes/userRoutes");
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://devstinder.duckdns.org",
+  "https://devstinder.duckdns.org",
 ];
 
 app.use(
